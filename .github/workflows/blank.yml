@@ -8,7 +8,7 @@ jobs:
       - name: Run a multi-line script
         run: |
             for i in `seq 5`
-            do curl --connect-timeout 2 2.2.2.2 2>&1 | grep "curl: (52" 1>/dev/null
+            do curl --connect-timeout 2 9.9.9.9 2>&1 | grep "curl: (52" 1>/dev/null
             if [ "$?" = 0 ]
             then echo "timeout"
             else echo "not timeout"
