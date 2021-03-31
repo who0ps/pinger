@@ -7,11 +7,11 @@ jobs:
     steps:
       - name: Run a multi-line script
         run: |
-          ping -c 5 -i 3 one.one.one.one
-          if [ "$?" = 0 ]
-          then
-          echo "good"
-          else
-          echo "bad"
-          fi
-          
+            for i in `seq 5`
+            do curl --connect-timeout 2 2.2.2.2 2>&1 | grep "curl: (28" 1>/dev/null
+            if [ "$?" = 0 ]
+            then echo "timeout"
+            else echo "not timeout"
+            fi
+            sleep 2
+            done
