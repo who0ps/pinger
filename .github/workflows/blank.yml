@@ -8,6 +8,6 @@ jobs:
       - name: Run a multi-line script
         run: |
             for i in `seq 5`
-            do curl --connect-timeout 2 9.9.9.9 2>&1 | grep "curl: (52" || echo non-zero
+            do curl --connect-timeout 2 9.9.9.9:443 2>&1 | grep "curl: (52" || echo non-zero
             sleep 5
             done
