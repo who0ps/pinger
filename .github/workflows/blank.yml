@@ -1,13 +1,17 @@
 name: CI
-on: workflow_dispatch
+on: 
+  schedule:
+    - cron: '0 */6 * * *' #every six hours
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Run a multi-line script
-        run: |
-            for i in `seq 5`
-            do curl --connect-timeout 2 9.9.9.9:443 2>&1 | grep "curl: (52" || echo non-zero
-            sleep 5
+      - name: curl
+        run: | #run curl 360 times with 60 seconds interval (six hours), if grep didnt find - send notif.
+            for i in `seq 360`
+            do curl --connect-timeout 3 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" 1>/dev/null ||\
+            curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
+            -F chat_id=${{ secrets.CHATID }} -F text="Service monitored by Github is down!" 2>/dev/null 1>/dev/null
+            sleep 60
             done
