@@ -1,0 +1,17 @@
+name: CI
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run a multi-line script
+        run: |
+          ping -c 5 -i 3 one.one.one.one
+          if [ "$?" = 0 ]
+          then
+          echo "good"
+          else
+          echo "bad"
+          fi
+          
