@@ -1,7 +1,7 @@
 name: CI-2
 on: 
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/5 * * * *' #test
   workflow_dispatch:
 
 jobs:
