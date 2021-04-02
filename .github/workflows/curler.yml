@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: curl
-        run: | #run curl 360 times with 60 seconds interval (total six hours), if grep didnt find - send notif.
-            for i in `seq 360`
+        run: | #run curl 359 times with 60 seconds interval (total six hours), if grep didnt find - send notif.
+            for i in `seq 359`
             do curl --connect-timeout 10 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" 1>/dev/null ||\
             curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
             -F chat_id=${{ secrets.CHATID }} -F text="Service monitored by Github is down!" 2>/dev/null 1>/dev/null
