@@ -1,0 +1,18 @@
+name: CI2
+on: 
+  schedule:
+    - cron: '40 2/6 * * *' #every six hours
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: curl2
+        run: | #run curl 356 times with 60 seconds interval (total < six hours), if grep didnt find - send notif.
+            for i in `seq 356`
+            do curl --connect-timeout 10 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (52" 1>/dev/null ||\
+            curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
+            -F chat_id=${{ secrets.CHATID }} -F text="${{ secrets.DOMAIN }} is down from Github!" 2>/dev/null 1>/dev/null
+            sleep 60
+            done
