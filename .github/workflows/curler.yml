@@ -11,7 +11,7 @@ jobs:
       - name: curl
         run: | #run curl 356 times with 60 seconds interval (total < six hours), if grep didnt find - send notif.
             for i in `seq 356`
-            do curl --connect-timeout 10 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" 1>/dev/null ||\
+            do curl --connect-timeout 10 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (56" 1>/dev/null ||\
             curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
             -F chat_id=${{ secrets.CHATID }} -F text="${{ secrets.DOMAIN }} is down from Github!" 2>/dev/null 1>/dev/null
             sleep 60
