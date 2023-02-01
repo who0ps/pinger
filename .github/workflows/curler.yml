@@ -16,7 +16,6 @@ jobs:
             do
               result1=$(curl --connect-timeout 15 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (56")
               result2=$(curl --connect-timeout 15 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52")
-              echo ok
               # if exit code 56 not found and flag not set
               if [ ! -z "$result1" ] && [ "$exit_56_found" = false ]; then
                 exit_56_found=true
@@ -38,9 +37,8 @@ jobs:
               fi
               if [ -z "$result2" ] && [ "$exit_52_found" = true ]; then
                 exit_52_found=false
-              # notify that host goes down
                 curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
                 -F chat_id=${{ secrets.CHATID }} -F text="${{ secrets.DOMAIN }} is down" 2>/dev/null 1>/dev/null
               fi
-              sleep 60       #time between checks
+              sleep 60
               done
