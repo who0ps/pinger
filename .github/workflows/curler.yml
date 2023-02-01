@@ -10,17 +10,17 @@ jobs:
     steps:
       - name: curl
         run: | #run curl 356 times with 60 seconds interval (total < six hours), if grep didnt find - send notif.
-counter=0
+          counter=0
 
-exit_56_found=false
+          exit_56_found=false
 
-while true; do
-  sleep 60
+          while true; do
+            sleep 60
 
-  ((counter++))
+            ((counter++))
 
-  if [ $counter -gt 356 ]; then
-    break
-  fi
-  echo ok
-done
+            if [ $counter -gt 356 ]; then
+              break
+            fi
+            echo ok
+          done
