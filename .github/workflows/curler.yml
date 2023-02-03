@@ -14,8 +14,8 @@ jobs:
             exit_52_found=true
             for i in `seq 356`
             do
-              result1=$(curl --connect-timeout 15 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (56")
-              result2=$(curl --connect-timeout 15 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52")
+              result1=$(curl --connect-timeout 15 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (56" || 1>&0)
+              result2=$(curl --connect-timeout 15 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" || 1>&0)
               # if exit code 56 not found and flag not set
               if [ ! -z "$result1" ] && [ "$exit_56_found" = false ]; then
                 exit_56_found=true
