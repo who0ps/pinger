@@ -12,7 +12,7 @@ jobs:
         run: | #(total < six hours), if grep didnt find - send notif.
             exit_56_found=tue
             exit_52_found=true
-            for i in `seq 352`
+            for i in `seq 353` #count of checks per run. ~356 for one server with 1min interval.
             do
               result1=$(curl --connect-timeout 15 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (56" || 1>&0)
               result2=$(curl --connect-timeout 15 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" || 1>&0)
@@ -40,5 +40,5 @@ jobs:
                 curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
                 -F chat_id=${{ secrets.CHATID }} -F text="${{ secrets.DOMAIN }} is down" 2>/dev/null 1>/dev/null
               fi
-              sleep 60
+              sleep 60 #interval between checks.
               done
