@@ -1,7 +1,7 @@
 name: CI
 on: 
   schedule:
-    - cron: '40 2/6 * * *' #every six hours
+    - cron: '40 2/6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -9,36 +9,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: curl
-        run: | #(total < six hours), if grep didnt find - send notif.
-            exit_56_found=tue
-            exit_52_found=true
-            for i in `seq 353` #count of checks per run. ~356 for one server with 1min interval.
+        run: |
+            _56=1
+            _52=1
+            n=/dev/null
+            tg="curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" -F chat_id=${{ secrets.CHATID }} -F text="
+            for i in `seq 354`
             do
-              result1=$(curl --connect-timeout 15 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (56" || 1>&0)
-              result2=$(curl --connect-timeout 15 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" || 1>&0)
-              # if exit code 56 not found and flag not set
-              if [ ! -z "$result1" ] && [ "$exit_56_found" = false ]; then
-                exit_56_found=true
-              # notify that host becomes up after it was down
-                curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
-                -F chat_id=${{ secrets.CHATID }} -F text="${{ secrets.DOMAIN2 }} is up" 2>/dev/null 1>/dev/null
+              r1=$(curl --connect-timeout 15 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (56" || 1>&0)
+              r2=$(curl --connect-timeout 15 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" || 1>&0)
+              if [ ! -z "$r1" ] && [ "$_56" = 0 ]; then
+                _56=1
+                $tg"${{ secrets.DOMAIN2 }} is up" &>$n
               fi
-              if [ ! -z "$result2" ] && [ "$exit_52_found" = false ]; then
-                exit_52_found=true
-                curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
-                -F chat_id=${{ secrets.CHATID }} -F text="${{ secrets.DOMAIN }} is up" 2>/dev/null 1>/dev/null
+              if [ ! -z "$r2" ] && [ "$_52" = 0 ]; then
+                _52=1
+                $tg"${{ secrets.DOMAIN }} is up" &>$n
               fi
-              # if exit code 56 was found and flag set
-              if [ -z "$result1" ] && [ "$exit_56_found" = true ]; then
-                exit_56_found=false
-              # notify that host goes down
-                curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
-                -F chat_id=${{ secrets.CHATID }} -F text="${{ secrets.DOMAIN2 }} is down" 2>/dev/null 1>/dev/null
+              if [ -z "$r1" ] && [ "$_56" = 1 ]; then
+                _56=0
+                $tg"${{ secrets.DOMAIN2 }} is down" &>$n
               fi
-              if [ -z "$result2" ] && [ "$exit_52_found" = true ]; then
-                exit_52_found=false
-                curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" \
-                -F chat_id=${{ secrets.CHATID }} -F text="${{ secrets.DOMAIN }} is down" 2>/dev/null 1>/dev/null
+              if [ -z "$r2" ] && [ "$_52" = 1 ]; then
+                _52=0
+                $tg"${{ secrets.DOMAIN }} is down" &>$n
               fi
-              sleep 60 #interval between checks.
+              sleep 60
               done
