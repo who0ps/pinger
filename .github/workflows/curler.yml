@@ -14,7 +14,7 @@ jobs:
             _52=1
             n=/dev/null
             tg="curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" -F chat_id=${{ secrets.CHATID }} -F text="
-            for i in `seq 354`
+            for i in `seq 353`
             do
               r1=$(curl --connect-timeout 15 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (56" || 1>&0)
               r2=$(curl --connect-timeout 15 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" || 1>&0)
