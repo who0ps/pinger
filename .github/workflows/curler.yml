@@ -17,7 +17,7 @@ jobs:
             for i in `seq 353`
             do
               r1=$(curl --connect-timeout 20 ${{ secrets.DOMAIN2 }}:443 2>&1 | grep "curl: (56" || 1>&0)
-              r2=$(curl --connect-timeout 20 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (52" || 1>&0)
+              r2=$(curl --connect-timeout 20 ${{ secrets.DOMAIN }}:443 2>&1 | grep "curl: (56" || 1>&0)
               if [ ! -z "$r1" ] && [ "$_56" = 0 ]; then
                 _56=1
                 $tg"${{ secrets.DOMAIN2 }} is up" &>$n
