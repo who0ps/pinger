@@ -1,0 +1,38 @@
+name: CI
+on: 
+  schedule:
+    - cron: '40 2/6 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: nc
+        run: |
+            s1=1
+            s2=1
+            n=/dev/null
+            tg="curl -s -X POST "https://api.telegram.org/bot"${{ secrets.TGBOTKEY }}"/sendMessage" -F chat_id=${{ secrets.CHATID }} -F text="
+            for i in `seq 353`
+            do
+              r1=$(nc -4z -w 20 ${{ secrets.DOMAIN }} 443 &>$n;echo $?)
+              r2=$(nc -4z -w 20 ${{ secrets.DOMAIN2 }} 443 &>$n;echo $?)
+             if [ "$r1" = 0 ] && [ "$s1" = 0 ]; then
+                s1=1
+                $tg"${{ secrets.DOMAIN }} is up" &>$n
+              fi
+              if [ "$r2" = 0 ] && [ "$s2" = 0 ]; then
+                s2=1
+                $tg"${{ secrets.DOMAIN2 }} is up" &>$n
+              fi
+              if [ "$r1" = 1 ] && [ "$s1" = 1 ]; then
+                s1=0
+                $tg"${{ secrets.DOMAIN }} is down" &>$n
+              fi
+              if [ "$r2" = 1 ] && [ "$s2" = 1 ]; then
+                s2=0
+                $tg"${{ secrets.DOMAIN2 }} is down" &>$n
+              fi
+              sleep 60
+              done
